@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BhoomiAI – Kisan Ka Digital Saathi</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet" />
+
+  <style>
+    :root {
+      --soil:   #3b1f0a;
+      --wheat:  #e8b84b;
+      --leaf:   #2d6a1f;
+      --sprout: #5aab3f;
+      --sky:    #e8f5e0;
+      --cream:  #fdf8ef;
+      --fog:    #f5f0e8;
+      --ink:    #1c1209;
+      --muted:  #7a6a55;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; }
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--cream);
+      color: var(--ink);
+      display: flex;
+      flex-direction: column;
+      height: 100dvh;
+      overflow: hidden;
+    }
+
+    /* HEADER */
+    .app-header {
+      background: var(--soil);
+      padding: 10px 14px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-shrink: 0;
+      box-shadow: 0 2px 12px rgba(0,0,0,.3);
+      z-index: 10;
+    }
+    .logo-badge {
+      width: 40px; height: 40px;
+      background: var(--wheat);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 20px; flex-shrink: 0;
+    }
+    .header-text h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.15rem; color: var(--wheat); line-height: 1.1;
+    }
+    .header-text p { font-size: .7rem; color: rgba(232,184,75,.65); font-weight: 300; }
+    .status-dot {
+      width: 7px; height: 7px; background: var(--sprout);
+      border-radius: 50%; display: inline-block; margin-right: 4px;
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0%,100% { opacity:1; transform:scale(1); }
+      50%      { opacity:.5; transform:scale(1.3); }
+    }
+    .loc-badge {
+      margin-left: auto;
+      display: flex; align-items: center; gap: 5px;
+      background: rgba(255,255,255,.1);
+      border-radius: 20px; padding: 4px 10px;
+      font-size: .72rem; color: rgba(255,255,255,.8);
+      cursor: pointer; border: none; transition: background .2s; white-space: nowrap;
+    }
+    .loc-badge:hover { background: rgba(255,255,255,.18); }
+    .loc-badge i { color: var(--wheat); font-size: .85rem; }
+    .loc-badge.granted { color: var(--wheat); }
+    .loc-badge.denied  { color: #e88b4b; }
+
+    /* LOCATION BANNER */
+    .loc-banner {
+      background: linear-gradient(90deg, #fffbf0, #fff8e1);
+      border-top: 2px solid var(--wheat);
+      padding: 9px 14px;
+      display: flex; align-items: center; gap: 10px;
+      flex-shrink: 0; font-size: .79rem; color: var(--soil);
+    }
+    .loc-banner i { font-size: 1.1rem; color: var(--wheat); flex-shrink: 0; }
+    .loc-banner strong { display: block; font-size: .83rem; }
+    .loc-banner-btn {
+      margin-left: auto;
+      background: var(--wheat); color: var(--soil);
+      border: none; border-radius: 8px; padding: 5px 12px;
+      font-size: .74rem; font-weight: 700; cursor: pointer;
+      white-space: nowrap; flex-shrink: 0; transition: background .2s;
+    }
+    .loc-banner-btn:hover { background: #d4a132; }
+    .loc-banner-close {
+      background: none; border: none; color: var(--muted);
+      font-size: 1rem; cursor: pointer; padding: 0; flex-shrink: 0;
+    }
+
+    /* TOPICS */
+    .topics-bar {
+      background: var(--fog);
+      border-bottom: 1px solid rgba(0,0,0,.07);
+      padding: 7px 10px;
+      display: flex; gap: 7px; overflow-x: auto;
+      scrollbar-width: none; flex-shrink: 0;
+    }
+    .topics-bar::-webkit-scrollbar { display: none; }
+    .topic-chip {
+      flex-shrink: 0; background: #fff;
+      border: 1.5px solid rgba(45,106,31,.3);
+      color: var(--leaf); border-radius: 20px;
+      padding: 4px 11px; font-size: .73rem; font-weight: 600;
+      cursor: pointer; transition: all .2s; white-space: nowrap;
+    }
+    .topic-chip:hover, .topic-chip.active {
+      background: var(--leaf); color: #fff; border-color: var(--leaf);
+    }
+
+    /* CHAT */
+    .chat-area {
+      flex: 1; overflow-y: auto;
+      padding: 14px 12px;
+      display: flex; flex-direction: column; gap: 14px;
+      background:
+        radial-gradient(ellipse at top left,    rgba(90,171,63,.07) 0%, transparent 55%),
+        radial-gradient(ellipse at bottom right, rgba(232,184,75,.06) 0%, transparent 55%),
+        var(--cream);
+    }
+    .chat-area::-webkit-scrollbar { width: 3px; }
+    .chat-area::-webkit-scrollbar-thumb { background: rgba(0,0,0,.12); border-radius: 4px; }
+
+    /* BUBBLES */
+    .msg-row {
+      display: flex; gap: 8px; align-items: flex-end;
+      animation: slideIn .25s ease;
+    }
+    @keyframes slideIn {
+      from { opacity:0; transform:translateY(8px); }
+      to   { opacity:1; transform:translateY(0); }
+    }
+    .msg-row.me { flex-direction: row-reverse; }
+    .avatar {
+      width: 30px; height: 30px; border-radius: 50%; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center; font-size: 14px;
+    }
+    .avatar.ai { background: var(--wheat); }
+    .avatar.me { background: var(--leaf); color: #fff; font-size: 12px; }
+    .bubble-wrap { display: flex; flex-direction: column; max-width: 85%; }
+    .msg-row.me .bubble-wrap { align-items: flex-end; }
+    .bubble {
+      padding: 10px 13px; border-radius: 18px;
+      font-size: .86rem; line-height: 1.6;
+    }
+    .bubble.ai {
+      background: #fff; color: var(--ink);
+      border-bottom-left-radius: 4px;
+      box-shadow: 0 1px 6px rgba(0,0,0,.08);
+    }
+    .bubble.me {
+      background: var(--leaf); color: #fff;
+      border-bottom-right-radius: 4px;
+      box-shadow: 0 1px 6px rgba(45,106,31,.25);
+    }
+    .bubble-time { font-size: .62rem; color: var(--muted); margin-top: 3px; padding: 0 2px; }
+
+    /* TYPING */
+    .typing-bubble span {
+      display: inline-block; width: 7px; height: 7px;
+      background: var(--muted); border-radius: 50%; margin: 0 2px;
+      animation: bounce 1.2s infinite;
+    }
+    .typing-bubble span:nth-child(2) { animation-delay: .2s; }
+    .typing-bubble span:nth-child(3) { animation-delay: .4s; }
+    @keyframes bounce {
+      0%,80%,100% { transform:translateY(0); opacity:.5; }
+      40%          { transform:translateY(-6px); opacity:1; }
+    }
+
+    /* RESPONSE CARD */
+    .response-card {
+      border-radius: 14px; overflow: hidden;
+      border: 1px solid rgba(0,0,0,.08);
+      font-size: .82rem;
+      box-shadow: 0 2px 12px rgba(0,0,0,.07);
+    }
+    .rc-weather {
+      background: linear-gradient(135deg, #1a4a7a 0%, #2d7dd2 100%);
+      color: #fff; padding: 11px 14px;
+      display: flex; align-items: center; gap: 12px;
+    }
+    .rc-weather .w-icon { font-size: 2.2rem; }
+    .rc-weather .temp   { font-size: 1.5rem; font-weight: 700; line-height: 1; }
+    .rc-weather .meta   { font-size: .71rem; opacity: .85; line-height: 1.6; margin-top: 2px; }
+
+    .rc-prices {
+      background: var(--sky);
+      padding: 9px 13px;
+      display: flex; gap: 8px; flex-wrap: wrap;
+      border-bottom: 1px solid rgba(0,0,0,.06);
+    }
+    .price-pill {
+      background: #fff;
+      border: 1px solid rgba(45,106,31,.25);
+      border-radius: 10px; padding: 4px 10px;
+      font-size: .74rem; font-weight: 600; color: var(--leaf);
+    }
+    .price-pill .price-val { color: var(--muted); font-weight: 400; }
+
+    .rc-section {
+      background: #fff;
+      border-top: 1px solid rgba(0,0,0,.05);
+      padding: 10px 13px;
+    }
+    .rc-section-label {
+      font-size: .67rem; font-weight: 700;
+      text-transform: uppercase; letter-spacing: .07em;
+      color: var(--wheat); margin-bottom: 5px;
+    }
+    .rc-section p { color: var(--ink); line-height: 1.65; font-size: .83rem; margin: 0; }
+
+    /* ERROR */
+    .error-card {
+      background: #fff5f5; border: 1px solid #fcc;
+      border-radius: 12px; padding: 10px 13px;
+      font-size: .82rem; color: #c0392b;
+      display: flex; align-items: flex-start; gap: 8px;
+    }
+    .error-card i { font-size: 1rem; flex-shrink: 0; margin-top: 2px; }
+
+    /* INPUT BAR */
+    .input-bar {
+      background: #fff;
+      border-top: 1px solid rgba(0,0,0,.08);
+      padding: 9px 10px;
+      display: flex; align-items: flex-end; gap: 7px;
+      flex-shrink: 0;
+      box-shadow: 0 -3px 16px rgba(0,0,0,.05);
+    }
+    .input-wrap {
+      flex: 1;
+      background: var(--fog);
+      border: 1.5px solid rgba(0,0,0,.1);
+      border-radius: 22px;
+      display: flex; align-items: flex-end;
+      padding: 6px 12px; gap: 6px;
+      transition: border-color .2s;
+    }
+    .input-wrap:focus-within { border-color: var(--leaf); background: #fff; }
+    .input-wrap textarea {
+      flex: 1; border: none; background: transparent;
+      resize: none; outline: none;
+      font-family: 'DM Sans', sans-serif;
+      font-size: .86rem; color: var(--ink);
+      max-height: 96px; line-height: 1.5; padding: 2px 0;
+    }
+    .input-wrap textarea::placeholder { color: var(--muted); }
+
+    .ph-wrap {
+      display: flex; align-items: center; gap: 4px;
+      background: var(--fog);
+      border: 1.5px solid rgba(0,0,0,.1);
+      border-radius: 12px; padding: 5px 9px;
+      flex-shrink: 0; min-width: 72px;
+    }
+    .ph-wrap label { font-size: .63rem; color: var(--muted); font-weight: 700; white-space: nowrap; }
+    .ph-wrap input {
+      width: 36px; border: none; background: transparent;
+      font-size: .82rem; font-family: 'DM Sans', sans-serif;
+      color: var(--soil); font-weight: 600; outline: none; text-align: center;
+    }
+
+    .send-btn {
+      width: 42px; height: 42px;
+      background: var(--leaf); border: none; border-radius: 50%;
+      color: #fff; font-size: 1rem;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; flex-shrink: 0;
+      transition: background .2s, transform .1s;
+      box-shadow: 0 2px 8px rgba(45,106,31,.4);
+    }
+    .send-btn:hover  { background: var(--soil); }
+    .send-btn:active { transform: scale(.93); }
+    .send-btn:disabled { background: #bbb; cursor: not-allowed; box-shadow: none; }
+
+    /* EMPTY STATE */
+    .empty-state {
+      text-align: center; padding: 30px 20px 10px; color: var(--muted);
+    }
+    .empty-state .big-icon { font-size: 3.2rem; margin-bottom: 10px; display: block; }
+    .empty-state h2 {
+      font-family: 'Playfair Display', serif;
+      color: var(--soil); font-size: 1.35rem; margin-bottom: 6px;
+    }
+    .empty-state p { font-size: .83rem; max-width: 260px; margin: 0 auto 14px; line-height: 1.55; }
+    .quick-pills { display: flex; flex-wrap: wrap; justify-content: center; gap: 7px; }
+    .quick-pill {
+      background: var(--sky); border: 1px solid rgba(45,106,31,.25);
+      color: var(--leaf); border-radius: 14px;
+      padding: 5px 12px; font-size: .75rem; font-weight: 600;
+      cursor: pointer; transition: all .15s;
+    }
+    .quick-pill:hover { background: var(--leaf); color: #fff; }
+  </style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="app-header">
+  <div class="logo-badge">🌾</div>
+  <div class="header-text">
+    <h1>BhoomiAI</h1>
+    <p><span class="status-dot"></span>Kisan Ka Digital Saathi</p>
+  </div>
+  <button class="loc-badge" id="locBadge" onclick="requestLocation()">
+    <i class="bi bi-geo-alt-fill"></i>
+    <span id="locText">Location द्या</span>
+  </button>
+</header>
+
+<!-- LOCATION BANNER -->
+<div class="loc-banner" id="locBanner">
+  <i class="bi bi-geo-alt-fill"></i>
+  <div>
+    <strong>Location Permission आवश्यक</strong>
+    अचूक शेती सल्ल्यासाठी स्थान आवश्यक आहे
+  </div>
+  <button class="loc-banner-btn" onclick="requestLocation()">Allow करा</button>
+  <button class="loc-banner-close" onclick="dismissBanner()"><i class="bi bi-x-lg"></i></button>
+</div>
+
+<!-- TOPICS -->
+<div class="topics-bar">
+  <button class="topic-chip active" onclick="insertTopic(this,'पीक सल्ला काय आहे?')">🌱 पीक सल्ला</button>
+  <button class="topic-chip" onclick="insertTopic(this,'आजचे हवामान कसे आहे?')">🌧️ हवामान</button>
+  <button class="topic-chip" onclick="insertTopic(this,'गव्हाचा आजचा भाव किती आहे?')">💰 मंडी भाव</button>
+  <button class="topic-chip" onclick="insertTopic(this,'खत कोणते वापरावे?')">🌿 खत</button>
+  <button class="topic-chip" onclick="insertTopic(this,'पाणी व्यवस्थापन कसे करावे?')">💧 सिंचाई</button>
+  <button class="topic-chip" onclick="insertTopic(this,'कीड नियंत्रण कसे करावे?')">🐛 कीड</button>
+</div>
+
+<!-- CHAT -->
+<div class="chat-area" id="chatArea">
+  <div class="empty-state" id="emptyState">
+    <span class="big-icon">🌾</span>
+    <h2>नमस्ते शेतकरी भाऊ!</h2>
+    <p>मी BhoomiAI आहे — तुमच्या शेतीच्या प्रत्येक प्रश्नाचे उत्तर देण्यासाठी सज्ज आहे.</p>
+    <div class="quick-pills">
+      <span class="quick-pill" onclick="fillAndSend('Gahu che pik lavayla pahije ka aata?')">🌾 गहू पेरणी कधी?</span>
+      <span class="quick-pill" onclick="fillAndSend('Aajcha tandool bajar bhav kiti aahe?')">🍚 तांदूळ भाव?</span>
+      <span class="quick-pill" onclick="fillAndSend('Pikavar kid ali aahe kay karu?')">🐛 कीड समस्या</span>
+      <span class="quick-pill" onclick="fillAndSend('Kharip haangamat konti pick changali?')">🌽 खरीप पीक?</span>
+    </div>
+  </div>
+</div>
+
+<!-- INPUT BAR -->
+<div class="input-bar">
+  <div class="input-wrap">
+    <textarea id="msgInput" rows="1"
+      placeholder="तुमचा प्रश्न लिहा… (मराठी, हिंदी, English)"
+      onkeydown="handleKey(event)"
+      oninput="autoResize(this)"></textarea>
+  </div>
+  <div class="ph-wrap" title="मातीचा pH">
+    <label>pH</label>
+    <input type="number" id="soilPh" value="5.5" min="0" max="14" step="0.1" />
+  </div>
+  <button class="send-btn" id="sendBtn" onclick="sendMessage()" title="पाठवा">
+    <i class="bi bi-send-fill"></i>
+  </button>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  const API_URL = 'http://127.0.0.1:8000/advice';
+  let userLat = null, userLon = null, userCity = 'pune';
+
+  /* ── GEOLOCATION ── */
+  function requestLocation() {
+    if (!navigator.geolocation) {
+      setLocStatus('denied', 'GPS उपलब्ध नाही');
+      return;
+    }
+    setLocStatus('pending', 'शोधत आहे…');
+    navigator.geolocation.getCurrentPosition(
+      pos => {
+        userLat = pos.coords.latitude;
+        userLon = pos.coords.longitude;
+        const display = `${userLat.toFixed(3)}°N`;
+        setLocStatus('granted', '📍 ' + display);
+        document.getElementById('locBanner').style.display = 'none';
+        reverseGeocode(userLat, userLon);
+      },
+      () => setLocStatus('denied', 'Location नाकारली'),
+      { enableHighAccuracy: true, timeout: 10000 }
+    );
+  }
+
+  function setLocStatus(state, text) {
+    const badge = document.getElementById('locBadge');
+    badge.className = `loc-badge ${state}`;
+    document.getElementById('locText').textContent = text;
+  }
+
+  async function reverseGeocode(lat, lon) {
+    try {
+      const r = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json`);
+      const d = await r.json();
+      userCity = (d.address?.city || d.address?.town || d.address?.village || 'pune').toLowerCase();
+    } catch (_) {}
+  }
+
+  function dismissBanner() {
+    document.getElementById('locBanner').style.display = 'none';
+  }
+
+  /* ── UTILS ── */
+  function nowTime() {
+    return new Date().toLocaleTimeString('mr-IN', { hour: '2-digit', minute: '2-digit' });
+  }
+  function escHtml(t) {
+    return String(t)
+      .replace(/&/g,'&amp;').replace(/</g,'&lt;')
+      .replace(/>/g,'&gt;').replace(/\n/g,'<br>');
+  }
+  function autoResize(el) {
+    el.style.height = 'auto';
+    el.style.height = Math.min(el.scrollHeight, 96) + 'px';
+  }
+  function handleKey(e) {
+    if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
+  }
+  function scrollBottom() {
+    const c = document.getElementById('chatArea');
+    c.scrollTo({ top: c.scrollHeight, behavior: 'smooth' });
+  }
+
+  /* ── TOPICS ── */
+  function insertTopic(el, text) {
+    document.querySelectorAll('.topic-chip').forEach(c => c.classList.remove('active'));
+    el.classList.add('active');
+    const ta = document.getElementById('msgInput');
+    ta.value = text; autoResize(ta); ta.focus();
+  }
+  function fillAndSend(text) {
+    const ta = document.getElementById('msgInput');
+    ta.value = text; autoResize(ta); sendMessage();
+  }
+
+  /* ── BUBBLE HELPERS ── */
+  function removeEmpty() { document.getElementById('emptyState')?.remove(); }
+
+  function addUserBubble(text) {
+    removeEmpty();
+    const c = document.getElementById('chatArea');
+    const d = document.createElement('div');
+    d.className = 'msg-row me';
+    d.innerHTML = `
+      <div class="bubble-wrap">
+        <div class="bubble me">${escHtml(text)}</div>
+        <div class="bubble-time">${nowTime()}</div>
+      </div>
+      <div class="avatar me"><i class="bi bi-person-fill"></i></div>`;
+    c.appendChild(d); scrollBottom();
+  }
+
+  function addTyping() {
+    const c = document.getElementById('chatArea');
+    const d = document.createElement('div');
+    d.className = 'msg-row'; d.id = 'typingRow';
+    d.innerHTML = `
+      <div class="avatar ai">🤖</div>
+      <div class="bubble ai typing-bubble"><span></span><span></span><span></span></div>`;
+    c.appendChild(d); scrollBottom();
+  }
+  function removeTyping() { document.getElementById('typingRow')?.remove(); }
+
+  function addAiBubble(innerHtml) {
+    const c = document.getElementById('chatArea');
+    const d = document.createElement('div');
+    d.className = 'msg-row';
+    d.innerHTML = `
+      <div class="avatar ai">🤖</div>
+      <div class="bubble-wrap" style="max-width:90%">
+        ${innerHtml}
+        <div class="bubble-time">${nowTime()}</div>
+      </div>`;
+    c.appendChild(d); scrollBottom();
+  }
+
+  function addErrorBubble(msg) {
+    addAiBubble(`
+      <div class="bubble ai">
+        <div class="error-card">
+          <i class="bi bi-exclamation-triangle-fill"></i>
+          <span>${msg}</span>
+        </div>
+      </div>`);
+  }
+
+  /* ── RENDER RESPONSE ── */
+  function renderResponse(data) {
+    const { weather, prices, advice } = data;
+
+    /* Weather */
+    const tempIcon = weather.temperature_2m > 35 ? '🌡️' : weather.temperature_2m > 25 ? '⛅' : '❄️';
+    const precipStr = weather.precipitation > 0
+      ? `🌧️ पाऊस: ${weather.precipitation} mm`
+      : '☀️ पाऊस नाही';
+
+    const weatherBlock = `
+      <div class="rc-weather">
+        <div class="w-icon">${tempIcon}</div>
+        <div>
+          <div class="temp">${weather.temperature_2m}°C</div>
+          <div class="meta">${precipStr}<br>${fmtTime(weather.time)}</div>
+        </div>
+      </div>`;
+
+    /* Prices */
+    const priceItems = Object.entries(prices).map(([crop, val]) =>
+      `<div class="price-pill">${cropLabel(crop)} <span class="price-val">₹${val}/क्विं</span></div>`
+    ).join('');
+    const pricesBlock = `<div class="rc-prices">${priceItems}</div>`;
+
+    /* Advice sections */
+    const sections = [
+      { icon:'🌾', label:'सल्ला',        key:'answer' },
+      { icon:'🌱', label:'पीक शिफारस',   key:'crop_recommendation' },
+      { icon:'🌿', label:'खत सल्ला',     key:'fertilizer_advice' },
+      { icon:'💧', label:'सिंचाई सल्ला', key:'irrigation_advice' },
+      { icon:'💰', label:'बाजार सल्ला',  key:'market_advice' },
+    ];
+    const adviceSections = sections
+      .filter(s => advice[s.key])
+      .map(s => `
+        <div class="rc-section">
+          <div class="rc-section-label">${s.icon} ${s.label}</div>
+          <p>${escHtml(advice[s.key])}</p>
+        </div>`)
+      .join('');
+
+    const card = `<div class="response-card">${weatherBlock}${pricesBlock}${adviceSections}</div>`;
+    addAiBubble(card);
+  }
+
+  function fmtTime(iso) {
+    if (!iso) return '';
+    try {
+      return new Date(iso).toLocaleString('mr-IN', { day:'2-digit', month:'short', hour:'2-digit', minute:'2-digit' });
+    } catch(_) { return iso; }
+  }
+
+  const CROP_LABELS = { wheat:'गहू', rice:'तांदूळ', soybean:'सोयाबीन', onion:'कांदा', cotton:'कापूस' };
+  function cropLabel(k) { return CROP_LABELS[k] || k; }
+
+  /* ── SEND MESSAGE ── */
+  async function sendMessage() {
+    const ta    = document.getElementById('msgInput');
+    const query = ta.value.trim();
+    if (!query) return;
+
+    const ph  = parseFloat(document.getElementById('soilPh').value) || 5.5;
+    const btn = document.getElementById('sendBtn');
+
+    ta.value = ''; autoResize(ta);
+    btn.disabled = true;
+    addUserBubble(query);
+    addTyping();
+
+    const payload = {
+      query,
+      lat:  userLat  ?? 21.132370,
+      lon:  userLon  ?? 79.083165,
+      city: userCity || 'pune',
+      soil: { ph }
+    };
+
+    try {
+      const res = await fetch(API_URL, {
+        method:  'POST',
+        headers: { 'Content-Type': 'application/json', 'accept': 'application/json' },
+        body:    JSON.stringify(payload)
+      });
+
+      removeTyping();
+
+      if (!res.ok) {
+        const errBody = await res.text().catch(() => '');
+        addErrorBubble(`Server Error <strong>${res.status}</strong>: ${errBody || 'कृपया पुन्हा प्रयत्न करा.'}`);
+      } else {
+        const data = await res.json();
+        renderResponse(data);
+      }
+    } catch (err) {
+      removeTyping();
+      const isNetworkErr = err instanceof TypeError;
+      addErrorBubble(
+        isNetworkErr
+          ? `Server ला connect होता आले नाही.<br><small>तुमचा server <strong>http://127.0.0.1:8000</strong> वर चालू आहे का तपासा.</small>`
+          : `Error: ${escHtml(err.message)}`
+      );
+    } finally {
+      btn.disabled = false;
+    }
+  }
+
+  /* ── INIT: auto-request location ── */
+  window.addEventListener('DOMContentLoaded', () => {
+    setTimeout(requestLocation, 600);
+  });
+</script>
+</body>
+</html>

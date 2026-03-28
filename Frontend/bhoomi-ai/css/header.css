@@ -1,0 +1,165 @@
+/* ── header.css — app header, location badge, language dropdown ── */
+
+.app-header {
+  background: var(--soil);
+  padding: 10px 14px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, .3);
+  z-index: 10;
+}
+
+.logo-badge {
+  width: 40px;
+  height: 40px;
+  background: var(--wheat);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  flex-shrink: 0;
+}
+
+.header-text h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.15rem;
+  color: var(--wheat);
+  line-height: 1.1;
+}
+
+.header-text p {
+  font-size: .7rem;
+  color: rgba(232, 184, 75, .65);
+  font-weight: 300;
+}
+
+.status-dot {
+  width: 7px;
+  height: 7px;
+  background: var(--sprout);
+  border-radius: 50%;
+  display: inline-block;
+  margin-right: 4px;
+  animation: pulse 2s infinite;
+}
+
+/* ── Language Dropdown ── */
+.lang-dropdown-wrap {
+  position: relative;
+  margin-left: auto;
+}
+
+.lang-btn {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  background: rgba(255, 255, 255, .1);
+  border: none;
+  border-radius: 20px;
+  padding: 5px 10px;
+  font-size: .75rem;
+  color: rgba(255, 255, 255, .85);
+  cursor: pointer;
+  transition: background .2s;
+  white-space: nowrap;
+}
+.lang-btn:hover { background: rgba(255, 255, 255, .18); }
+.lang-btn .flag { font-size: 1rem; }
+.lang-btn i     { font-size: .65rem; opacity: .7; }
+
+.lang-menu {
+  display: none;
+  position: absolute;
+  right: 0;
+  top: calc(100% + 6px);
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 6px 24px rgba(0, 0, 0, .15);
+  overflow: hidden;
+  min-width: 150px;
+  z-index: 200;
+}
+.lang-menu.open { display: block; }
+
+.lang-option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 14px;
+  font-size: .83rem;
+  color: var(--ink);
+  cursor: pointer;
+  transition: background .15s;
+}
+.lang-option:hover         { background: var(--fog); }
+.lang-option.active        { background: var(--sky); color: var(--leaf); font-weight: 600; }
+.lang-option .lang-flag    { font-size: 1.1rem; }
+.lang-option .lang-name    { flex: 1; }
+.lang-option .lang-native  { font-size: .72rem; color: var(--muted); }
+
+/* ── Location Badge ── */
+.loc-badge {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  background: rgba(255, 255, 255, .1);
+  border-radius: 20px;
+  padding: 5px 10px;
+  font-size: .72rem;
+  color: rgba(255, 255, 255, .8);
+  cursor: pointer;
+  border: none;
+  transition: background .2s;
+  white-space: nowrap;
+  max-width: 130px;
+  overflow: hidden;
+}
+.loc-badge:hover { background: rgba(255, 255, 255, .18); }
+.loc-badge i     { color: var(--wheat); font-size: .85rem; flex-shrink: 0; }
+.loc-badge span  { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.loc-badge.granted { color: var(--wheat); }
+.loc-badge.denied  { color: #e88b4b; }
+
+/* ── Location Banner ── */
+.loc-banner {
+  background: linear-gradient(90deg, #fffbf0, #fff8e1);
+  border-top: 2px solid var(--wheat);
+  padding: 9px 14px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+  font-size: .79rem;
+  color: var(--soil);
+}
+.loc-banner i      { font-size: 1.1rem; color: var(--wheat); flex-shrink: 0; }
+.loc-banner strong { display: block; font-size: .83rem; }
+
+.loc-banner-btn {
+  margin-left: auto;
+  background: var(--wheat);
+  color: var(--soil);
+  border: none;
+  border-radius: 8px;
+  padding: 5px 12px;
+  font-size: .74rem;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition: background .2s;
+}
+.loc-banner-btn:hover { background: #d4a132; }
+
+.loc-banner-close {
+  background: none;
+  border: none;
+  color: var(--muted);
+  font-size: 1rem;
+  cursor: pointer;
+  padding: 0;
+  flex-shrink: 0;
+}

@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BhoomiAI – Kisan Ka Digital Saathi</title>
+
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <!-- Bootstrap Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet" />
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
+
+  <!-- App CSS (order matters) -->
+  <link rel="stylesheet" href="css/base.css" />
+  <link rel="stylesheet" href="css/header.css" />
+  <link rel="stylesheet" href="css/chat.css" />
+  <link rel="stylesheet" href="css/response.css" />
+  <link rel="stylesheet" href="css/input.css" />
+</head>
+<body>
+
+  <!-- ── HEADER ── -->
+  <header class="app-header">
+
+    <div class="logo-badge">🌾</div>
+
+    <div class="header-text">
+      <h1>BhoomiAI</h1>
+      <p><span class="status-dot"></span><span id="appSubtitle">किसानचा डिजिटल साथी</span></p>
+    </div>
+
+    <!-- Location badge -->
+    <button class="loc-badge" id="locBadge" onclick="requestLocation()">
+      <i class="bi bi-geo-alt-fill"></i>
+      <span id="locText">Location द्या</span>
+    </button>
+
+    <!-- Language dropdown -->
+    <div class="lang-dropdown-wrap">
+      <button class="lang-btn" onclick="toggleLangMenu()">
+        <span id="langBtnLabel">मराठी</span>
+        <i class="bi bi-chevron-down"></i>
+      </button>
+      <div class="lang-menu" id="langMenu"></div>
+    </div>
+
+  </header>
+
+  <!-- ── LOCATION PERMISSION BANNER ── -->
+  <div class="loc-banner" id="locBanner">
+    <i class="bi bi-geo-alt-fill"></i>
+    <div>
+      <strong id="locBannerTitle">Location Permission आवश्यक</strong>
+      <span id="locBannerDesc">अचूक शेती सल्ल्यासाठी स्थान आवश्यक आहे</span>
+    </div>
+    <button class="loc-banner-btn" id="locBannerBtn" onclick="requestLocation()">Allow करा</button>
+    <button class="loc-banner-close" id="locBannerDismiss" onclick="dismissBanner()" title="नंतर">
+      <i class="bi bi-x-lg"></i>
+    </button>
+  </div>
+
+  <!-- ── TOPIC CHIPS ── -->
+  <div class="topics-bar">
+    <button class="topic-chip active">🌱 पीक सल्ला</button>
+    <button class="topic-chip">🌧️ हवामान</button>
+    <button class="topic-chip">💰 मंडी भाव</button>
+    <button class="topic-chip">🌿 खत</button>
+    <button class="topic-chip">💧 सिंचाई</button>
+    <button class="topic-chip">🐛 कीड</button>
+  </div>
+
+  <!-- ── CHAT AREA ── -->
+  <div class="chat-area" id="chatArea">
+
+    <!-- Welcome / empty state -->
+    <div class="empty-state" id="emptyState">
+      <span class="big-icon">🌾</span>
+      <h2>नमस्ते शेतकरी भाऊ!</h2>
+      <p>मी BhoomiAI आहे — तुमच्या शेतीच्या प्रत्येक प्रश्नाचे उत्तर देण्यासाठी सज्ज आहे.</p>
+      <div class="quick-pills">
+        <span class="quick-pill" onclick="fillAndSend('Gahu che pik lavayla pahije ka aata?')">🌾 गहू पेरणी कधी?</span>
+        <span class="quick-pill" onclick="fillAndSend('Aajcha tandool bajar bhav kiti aahe?')">🍚 तांदूळ भाव?</span>
+        <span class="quick-pill" onclick="fillAndSend('Pikavar kid ali aahe kay karu?')">🐛 कीड समस्या</span>
+        <span class="quick-pill" onclick="fillAndSend('Kharip haangamat konti pick changali?')">🌽 खरीप पीक?</span>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ── INPUT BAR ── -->
+  <div class="input-bar">
+    <div class="input-wrap">
+      <textarea
+        id="msgInput"
+        rows="1"
+        placeholder="तुमचा प्रश्न लिहा…"
+        onkeydown="handleKey(event)"
+        oninput="autoResize(this)">
+      </textarea>
+    </div>
+
+    <!-- Soil pH -->
+    <div class="ph-wrap" title="मातीचा pH">
+      <label>pH</label>
+      <input type="number" id="soilPh" value="5.5" min="0" max="14" step="0.1" />
+    </div>
+
+    <!-- Send -->
+    <button class="send-btn" id="sendBtn" onclick="sendMessage()" title="पाठवा">
+      <i class="bi bi-send-fill"></i>
+    </button>
+  </div>
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+  <!-- App JS (load order: i18n → location → ui → api → app) -->
+  <script src="js/i18n.js"></script>
+  <script src="js/location.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/app.js"></script>
+
+</body>
+</html>

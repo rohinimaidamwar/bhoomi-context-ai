@@ -1,0 +1,91 @@
+/* ── input.css — bottom input bar, soil pH field, send button ── */
+
+.input-bar {
+  background: #fff;
+  border-top: 1px solid rgba(0, 0, 0, .08);
+  padding: 9px 10px;
+  display: flex;
+  align-items: flex-end;
+  gap: 7px;
+  flex-shrink: 0;
+  box-shadow: 0 -3px 16px rgba(0, 0, 0, .05);
+}
+
+.input-wrap {
+  flex: 1;
+  background: var(--fog);
+  border: 1.5px solid rgba(0, 0, 0, .1);
+  border-radius: 22px;
+  display: flex;
+  align-items: flex-end;
+  padding: 6px 12px;
+  gap: 6px;
+  transition: border-color .2s;
+}
+.input-wrap:focus-within { border-color: var(--leaf); background: #fff; }
+
+.input-wrap textarea {
+  flex: 1;
+  border: none;
+  background: transparent;
+  resize: none;
+  outline: none;
+  font-family: 'DM Sans', sans-serif;
+  font-size: .86rem;
+  color: var(--ink);
+  max-height: 96px;
+  line-height: 1.5;
+  padding: 2px 0;
+}
+.input-wrap textarea::placeholder { color: var(--muted); }
+
+/* pH field */
+.ph-wrap {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: var(--fog);
+  border: 1.5px solid rgba(0, 0, 0, .1);
+  border-radius: 12px;
+  padding: 5px 9px;
+  flex-shrink: 0;
+  min-width: 72px;
+}
+.ph-wrap label {
+  font-size: .63rem;
+  color: var(--muted);
+  font-weight: 700;
+  white-space: nowrap;
+}
+.ph-wrap input {
+  width: 36px;
+  border: none;
+  background: transparent;
+  font-size: .82rem;
+  font-family: 'DM Sans', sans-serif;
+  color: var(--soil);
+  font-weight: 600;
+  outline: none;
+  text-align: center;
+}
+
+/* Send button */
+.send-btn {
+  width: 42px;
+  height: 42px;
+  background: var(--leaf);
+  border: none;
+  border-radius: 50%;
+  color: #fff;
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background .2s, transform .1s;
+  box-shadow: 0 2px 8px rgba(45, 106, 31, .4);
+}
+.send-btn:hover  { background: var(--soil); }
+.send-btn:active { transform: scale(.93); }
+.send-btn:disabled { background: #bbb; cursor: not-allowed; box-shadow: none; }
